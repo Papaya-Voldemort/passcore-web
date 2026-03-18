@@ -159,6 +159,9 @@ footer {
     padding: 1rem;
     text-align: center;
     color: #c6c6c6;
-    margin-bottom: 3rem;
+    margin-bottom: 1.1rem;
 }
 
+footer p {
+    margin: 0;
+}
