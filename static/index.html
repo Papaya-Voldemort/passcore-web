@@ -7,19 +7,21 @@
 </head>
 <body>
     <main>
-        <h1>Passcore Web</h1>
+        <div id="header">
+            <h1>Check Your Password Strength</h1>
+            <p>Powered by Passcore</p>
+        </div>
         <section class="card">
-            <h2>Enter Your Password:</h2>
             <form action="passcore-web-production.up.railway.app" method="post" id="password-form">
                 <div class="input-wrapper">
-                    <input type="text" name="password" id="password">
+                    <input type="text" name="password" id="password" placeholder="Enter your password...">
                     <div id="strength-bar"></div>
                 </div>
 
                 <input type="submit" value="submit">
             </form>
-            <p id="results"></p>
         </section>
+        <div id="results" class="results"></div>
     </main>
     <footer>
         <p>Passwords are <strong>NEVER</strong> saved on the server.</p>
