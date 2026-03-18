@@ -3,7 +3,7 @@
 }
 
 html {
-    font-size: 24px;
+    font-size: 20px;
 }
 
 body {
@@ -67,8 +67,8 @@ main {
     /* visuals */
     border-radius: 2rem;
     background: white;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .card > * + * {
@@ -124,7 +124,7 @@ input[type=submit]:hover {
 #password {
     display: block;
     width: 100%;
-    padding: 1.1rem 1rem;
+    padding: 1rem 1rem;
     border: none;
     outline: none;
     background: transparent;
@@ -134,7 +134,7 @@ input[type=submit]:hover {
 #password:focus {
     outline: none;
     border-color: #999;
-    box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
 }
 
 .input-wrapper:focus-within {
@@ -164,4 +164,50 @@ footer {
 
 footer p {
     margin: 0;
+}
+
+@media screen and (max-width: 600px) {
+    html {
+        font-size: 18px;
+    }
+
+    main {
+        padding: 1.25rem 1rem;
+    }
+
+    #header {
+        margin-top: 3rem;
+    }
+
+    #header h1 {
+        font-size: 2rem;
+        line-height: 1.1;
+    }
+
+    .card {
+        margin: 1rem 0;
+        padding: 0.75rem;
+    }
+
+    form {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .input-wrapper {
+        width: 100%;
+    }
+
+    #password {
+        font-size: 1rem;
+    }
+
+    input[type=submit] {
+        width: 100%;
+        padding: 0.9rem 1rem;
+    }
+
+    footer {
+        padding: 0.75rem 1rem 1.25rem;
+    }
 }
