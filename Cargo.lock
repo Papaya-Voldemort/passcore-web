@@ -320,9 +320,9 @@ dependencies = [
 
 [[package]]
 name = "passcore"
-version = "0.2.1"
+version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "48a5152c20d0b2d220e5ff3f115b91a36a6411b50c6ee6ad08d2f3c02e054838"
+checksum = "f47c6528524a9639da4fcbee781dd5968752dca1beb32c1a3def724ef89d891c"
 dependencies = [
  "once_cell",
 ]

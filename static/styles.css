@@ -87,3 +87,40 @@ input[type=submit] {
 input[type=submit]:hover {
     background: #4f46e5;
 }
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 1rem;
+    border: 1px solid #ccc;
+    background: white;
+}
+
+#password {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: none;
+    outline: none;
+    background: transparent;
+    border-radius: 0;
+}
+
+#password:focus {
+    outline: none;
+}
+
+.input-wrapper:focus-within {
+    border-color: #6366f1;
+}
+
+#strength-bar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 0%;
+    background: red;
+    transition: width 0.3s ease, background 0.3s ease;
+}
