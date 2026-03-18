@@ -6,9 +6,15 @@ body {
     margin: 0;
     font-family: system-ui, -apple-system, sans-serif;
     background: #f5f7fa;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 main {
+    flex: 1;
+
     /* layout */
     display: flex;
     flex-direction: column;
@@ -17,7 +23,6 @@ main {
 
     /* sizing */
     width: 100%;
-    min-height: 100vh;
     max-height: 100%;
 
     /* text */
@@ -123,4 +128,10 @@ input[type=submit]:hover {
     width: 0%;
     background: red;
     transition: width 0.3s ease, background 0.3s ease;
+}
+
+footer {
+    padding: 1rem;
+    text-align: center;
+    color: #c6c6c6;
 }
