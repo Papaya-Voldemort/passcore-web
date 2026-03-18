@@ -5,12 +5,8 @@ form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (password != "") {
 
-        const API_URL = location.hostname === "localhost"
-            ? "http://localhost:3000"
-            : "https://passcore-web-production.up.railway.app";
-
         try {
-            const res = await fetch(`${API_URL}/score`, {
+            const res = await fetch(`/score`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

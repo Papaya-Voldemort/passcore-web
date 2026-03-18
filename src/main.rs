@@ -6,7 +6,10 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use passcore::{score, review_password, grade_password};
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::{
+    cors::{Any, CorsLayer},
+    services::ServeDir,
+};
 
 #[derive(Serialize, Deserialize)]
 struct Input {
@@ -20,9 +23,6 @@ struct Output {
     grade: String,
 }
 
-async fn root() -> &'static str {
-    "Please call the /score endpoint!"
-}
 
 async fn health() -> &'static str {
     "I am healthy!"
@@ -50,9 +50,9 @@ async fn main() {
         .allow_headers(Any);
 
     let app = Router::new()
-        .route("/", get(root))
         .route("/health", get(health))
         .route("/score", post(score_password))
+        .fallback_service(ServeDir::new("static"))
         .layer(cors);
 
     // run our app with hyper, listening globally on port 3000
