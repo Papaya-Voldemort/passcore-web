@@ -6,27 +6,50 @@
     <link rel="stylesheet" href="styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
-    <main>
-        <div id="header">
-            <h1>Check Your Password Strength</h1>
-            <p>Powered by Passcore</p>
-        </div>
-        <section class="card">
-            <form action="passcore-web-production.up.railway.app" method="post" id="password-form">
-                <div class="input-wrapper">
-                    <input type="text" name="password" id="password" placeholder="Enter your password...">
-                    <div id="strength-bar"></div>
-                </div>
+<main>
+    <body>
+    <button id="theme-toggle" aria-label="Toggle dark mode">
+    <span class="icon sun-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+            <rect width="256" height="256" fill="none"/>
+            <line x1="128" y1="40" x2="128" y2="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+            <circle cx="128" cy="128" r="56" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+            <line x1="64" y1="64" x2="48" y2="48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+            <line x1="64" y1="192" x2="48" y2="208" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+            <line x1="192" y1="64" x2="208" y2="48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+            <line x1="192" y1="192" x2="208" y2="208" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+            <line x1="40" y1="128" x2="16" y2="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+            <line x1="128" y1="216" x2="128" y2="240" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+            <line x1="216" y1="128" x2="240" y2="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+        </svg>
+    </span>
 
-                <input type="submit" value="submit">
-            </form>
-        </section>
-        <div id="results" class="results"></div>
-    </main>
-    <footer>
-        <p>Passwords are <strong>NEVER</strong> saved on the server.</p>
-    </footer>
-    <script src="main.js"></script>
+        <span class="icon moon-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+            <rect width="256" height="256" fill="none"/>
+            <path d="M108.11,28.11A96.09,96.09,0,0,0,227.89,147.89,96,96,0,1,1,108.11,28.11Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+        </svg>
+    </span>
+    </button>
+    <div id="header">
+        <h1>Check Your Password Strength</h1>
+        <p>Powered by Passcore</p>
+    </div>
+    <section class="card">
+        <form action="passcore-web-production.up.railway.app" method="post" id="password-form">
+            <div class="input-wrapper">
+                <input type="text" name="password" id="password" placeholder="Enter your password...">
+                <div id="strength-bar"></div>
+            </div>
+
+            <input type="submit" value="submit">
+        </form>
+    </section>
+    <div id="results" class="results"></div>
+</main>
+<footer>
+    <p>Passwords are <strong>NEVER</strong> saved on the server.</p>
+</footer>
+<script src="main.js"></script>
 </body>
 </html>

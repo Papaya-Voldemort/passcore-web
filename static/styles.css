@@ -6,14 +6,81 @@ html {
     font-size: 20px;
 }
 
+:root {
+    --background: #f5f7fa;
+    --text: #111111;
+    --subtitle: #bdbdbd;
+    --card-background: #ffffff;
+    --input-background: #ffffff;
+    --input-border: #cccccc;
+    --input-border-focus: #999999;
+    --card-border: rgba(0, 0, 0, 0.08);
+    --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    --focus-ring: 0 0 0 3px rgba(99, 102, 241, 0.18);
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --button-text: #ffffff;
+    --footer-text: #8c8c8c;
+    --strength-weak: #ef4444;
+    --placeholder: #9ca3af;
+    --grade-f: #f82b2b;
+    --grade-d-minus: #ff6f29;
+    --grade-d: #e47d4a;
+    --grade-d-plus: #ffc924;
+    --grade-c-minus: #ffd033;
+    --grade-c: #e4bf4f;
+    --grade-c-plus: #aaf829;
+    --grade-b-minus: #a7f12d;
+    --grade-b: #8fc635;
+    --grade-b-plus: #15e461;
+    --grade-a-minus: #1fd662;
+    --grade-a: #22c55e;
+    --grade-a-plus: #26b55a;
+}
+
+.dark {
+    --background: #0f1218;
+    --text: #eef2f7;
+    --subtitle: #9aa4b2;
+    --card-background: #171c24;
+    --input-background: #11161d;
+    --input-border: #2b3442;
+    --input-border-focus: #5f6b7c;
+    --card-border: rgba(255, 255, 255, 0.08);
+    --card-shadow: 0 18px 40px rgba(0, 0, 0, 0.38);
+    --focus-ring: 0 0 0 3px rgba(129, 140, 248, 0.28);
+    --primary: #818cf8;
+    --primary-hover: #6366f1;
+    --button-text: #ffffff;
+    --footer-text: #7f8a99;
+    --strength-weak: #f87171;
+    --placeholder: #7f8ea3;
+
+    --grade-f: #ff5d5d;
+    --grade-d-minus: #ff8a4c;
+    --grade-d: #f29a68;
+    --grade-d-plus: #ffd34d;
+    --grade-c-minus: #ffe066;
+    --grade-c: #e7cb6a;
+    --grade-c-plus: #bdfc57;
+    --grade-b-minus: #aef250;
+    --grade-b: #93d74d;
+    --grade-b-plus: #3eea7b;
+    --grade-a-minus: #38df78;
+    --grade-a: #34d26f;
+    --grade-a-plus: #2fc266;
+}
+
 body {
     margin: 0;
     font-family: system-ui, -apple-system, sans-serif;
-    background: #f5f7fa;
+    background: var(--background);
+    color: var(--text);
 
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    transition: 0.2s ease-in-out;
 }
 
 main {
@@ -41,7 +108,7 @@ main {
 #header p {
     margin: 0;
     font-size: 0.85rem;
-    color: #bdbdbd;
+    color: var(--subtitle);
 }
 
 #header h1 {
@@ -66,9 +133,9 @@ main {
 
     /* visuals */
     border-radius: 2rem;
-    background: white;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: var(--card-background);
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--card-border);
 }
 
 .card > * + * {
@@ -90,26 +157,28 @@ form {
 input {
     padding: 0.8rem 1rem;
     border-radius: 2rem;
-    border: 1px solid #e3e3e3;
+    border: 1px solid var(--input-border);
     outline: none;
     font-size: 1.2rem;
+    background: var(--input-background);
+    color: var(--text);
 }
 
 input:focus {
-    border-color: #6366f1;
+    border-color: var(--primary);
 }
 
 input[type=submit] {
-    background: #6366f1;
-    color: white;
+    background: var(--primary);
+    color: var(--button-text);
     border: none;
     cursor: pointer;
-    transition: 0.2s;
+    transition: background 0.2s ease;
     padding: 1rem 2rem;
 }
 
 input[type=submit]:hover {
-    background: #4f46e5;
+    background: var(--primary-hover);
 }
 
 .input-wrapper {
@@ -117,8 +186,8 @@ input[type=submit]:hover {
     width: 100%;
     overflow: hidden;
     border-radius: 2rem;
-    border: 1px solid #ccc;
-    background: white;
+    border: 1px solid var(--input-border);
+    background: var(--input-background);
 }
 
 #password {
@@ -129,16 +198,19 @@ input[type=submit]:hover {
     outline: none;
     background: transparent;
     border-radius: 0;
+    color: var(--text);
+}
+
+#password::placeholder {
+    color: var(--placeholder);
 }
 
 #password:focus {
     outline: none;
-    border-color: #999;
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
 }
 
 .input-wrapper:focus-within {
-    border-color: #6366f1;
+    border-color: var(--primary);
 }
 
 #strength-bar {
@@ -147,7 +219,7 @@ input[type=submit]:hover {
     bottom: 0;
     height: 3px;
     width: 0%;
-    background: red;
+    background: var(--strength-weak);
     transition: width 0.3s ease, background 0.3s ease;
 }
 
@@ -158,12 +230,76 @@ input[type=submit]:hover {
 footer {
     padding: 1rem;
     text-align: center;
-    color: #c6c6c6;
+    color: var(--footer-text);
     margin-bottom: 1.1rem;
 }
 
 footer p {
     margin: 0;
+}
+
+#theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+
+    width: 44px;
+    height: 44px;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    background: var(--card-background);
+    color: var(--text);
+    cursor: pointer;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition:
+            background 0.25s ease,
+            color 0.25s ease,
+            border-color 0.25s ease,
+            transform 0.15s ease;
+}
+
+#theme-toggle:hover {
+    transform: scale(1.05);
+}
+
+#theme-toggle svg {
+    width: 20px;
+    height: 20px;
+}
+
+#theme-toggle .icon {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.sun-icon {
+    opacity: 0;
+    transform: scale(0.8) rotate(-20deg);
+}
+
+.moon-icon {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+
+body.dark .sun-icon {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+
+body.dark .moon-icon {
+    opacity: 0;
+    transform: scale(0.8) rotate(20deg);
 }
 
 @media screen and (max-width: 600px) {

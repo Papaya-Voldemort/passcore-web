@@ -1,20 +1,26 @@
 const form = document.querySelector("#password-form");
 const bar = document.querySelector("#strength-bar");
 
-const colors = {
-    "F": "#f82b2b",
-    "D-": "#ff6f29",
-    "D": "#e47d4a",
-    "D+": "#ffc924",
-    "C-": "#ffd033",
-    "C": "#e4bf4f",
-    "C+": "#aaf829",
-    "B-": "#a7f12d",
-    "B": "#8fc635",
-    "B+": "#15e461",
-    "A-": "#1fd662",
-    "A": "#22c55e",
-    "A+": "#26b55a"
+// Helper to get CSS variable value
+function getGradeColor(grade) {
+    const map = {
+        "F": "--grade-f",
+        "D-": "--grade-d-minus",
+        "D": "--grade-d",
+        "D+": "--grade-d-plus",
+        "C-": "--grade-c-minus",
+        "C": "--grade-c",
+        "C+": "--grade-c-plus",
+        "B-": "--grade-b-minus",
+        "B": "--grade-b",
+        "B+": "--grade-b-plus",
+        "A-": "--grade-a-minus",
+        "A": "--grade-a",
+        "A+": "--grade-a-plus"
+    };
+    const varName = map[grade];
+    if (!varName) return null;
+    return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
 }
 
 form.addEventListener("submit", async (e) => {
@@ -37,7 +43,7 @@ form.addEventListener("submit", async (e) => {
                 `Score: ${data.score} | Grade ${data.grade}`;
 
             bar.style.width = `${data.score}%`;
-            bar.style.background = colors[data.grade] || "gray";
+            bar.style.background = getGradeColor(data.grade) || "gray";
 
 
         } catch (err) {
@@ -46,5 +52,22 @@ form.addEventListener("submit", async (e) => {
         }
     } else {
         document.querySelector("#results").textContent = "Please enter your password.";
+    }
+});
+
+const toggleButton = document.querySelector("#theme-toggle");
+const savedTheme = localStorage.getItem("theme");
+
+if (savedTheme === "dark") {
+    document.body.classList.add("dark");
+}
+
+toggleButton.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+
+    if (document.body.classList.contains("dark")) {
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "light");
     }
 });
