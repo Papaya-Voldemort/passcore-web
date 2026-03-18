@@ -1,0 +1,89 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #f5f7fa;
+}
+
+main {
+    /* layout */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /* sizing */
+    width: 100%;
+    min-height: 100vh;
+    max-height: 100%;
+
+    /* text */
+    text-align: center;
+    padding: 1rem;
+}
+
+.card {
+    /* layout */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 400px;
+    width: 100%;
+
+    /* spacing */
+    padding: 2rem;
+    margin: 1rem;
+
+    /* text */
+    text-align: center;
+
+    /* visuals */
+    border: 1px solid black;
+    border-radius: 1rem;
+    background: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.card > * + * {
+    margin-top: 1rem;
+}
+
+form {
+    /* layout */
+    display: flex;
+    justify-content: center;
+
+    /* sizing */
+    width: 100%;
+
+    /* spacing */
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+input {
+    padding: 0.6rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+input:focus {
+    border-color: #6366f1;
+}
+
+input[type=submit] {
+    background: #6366f1;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+input[type=submit]:hover {
+    background: #4f46e5;
+}

@@ -6,6 +6,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use passcore::{score, review_password, grade_password};
+use tower_http::cors::{Any, CorsLayer};
 
 #[derive(Serialize, Deserialize)]
 struct Input {
@@ -43,13 +44,16 @@ async fn score_password(Json(input): Json<Input>) -> Json<Output> {
 
 #[tokio::main]
 async fn main() {
-    // build our application with a single route
-    // let app = Router::new().route("/", get(|| async { "Hello, World!" }));
+    let cors = CorsLayer::new()
+        .allow_origin(Any)
+        .allow_methods(Any)
+        .allow_headers(Any);
 
     let app = Router::new()
         .route("/", get(root))
         .route("/health", get(health))
-        .route("/score", post(score_password));
+        .route("/score", post(score_password))
+        .layer(cors);
 
     // run our app with hyper, listening globally on port 3000
     let port = std::env::var("PORT").unwrap_or("3000".to_string());
