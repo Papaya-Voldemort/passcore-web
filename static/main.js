@@ -44,38 +44,56 @@ function getGradeColor(grade) {
     return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
 }
 
-form.addEventListener("submit", async (e) => {
-    const password = document.querySelector("#password").value;
-    e.preventDefault();
-    if (password != "") {
+const passwordInput = document.querySelector("#password");
+const results = document.querySelector("#results");
+
+let debounceTimer;
+let controller;
+
+form.addEventListener("input", async (e) => {
+    const password = passwordInput.value.trim();
+    clearTimeout(debounceTimer);
+
+    if (controller) {
+        controller.abort();
+    }
+
+    if (password === "") {
+        results.textContent = "Please enter your password.";
+        bar.style.width = "0%";
+        return;
+    }
+
+    debounceTimer = setTimeout(async () => {
+        controller = new AbortController();
 
         try {
-            const res = await fetch(`/score`, {
+            const res = await fetch("/score", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ password: password })
+                body: JSON.stringify({ password }),
+                signal: controller.signal
             });
+
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}`);
+            }
 
             const data = await res.json();
 
-            document.querySelector("#results").textContent =
-                `Score: ${data.score} | Grade ${data.grade}`;
-
+            results.textContent = `Score: ${data.score} | Grade ${data.grade}`;
             bar.style.width = `${data.score}%`;
             bar.style.background = getGradeColor(data.grade) || "gray";
-
-
         } catch (err) {
-            console.error(err);
-            document.querySelector("#results").textContent = "Error calling API";
+            if (err.name !== "AbortError") {
+                console.error(err);
+                results.textContent = "Error calling API";
+            }
         }
-    } else {
-        document.querySelector("#results").textContent = "Please enter your password.";
-    }
+    }, 250);
 
-    loadStats();
 });
 
 const toggleButton = document.querySelector("#theme-toggle");

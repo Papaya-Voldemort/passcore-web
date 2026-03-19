@@ -1,18 +1,25 @@
 use axum::{
-    routing::get,
-    routing::post,
-    Router,
-    Json,
+    routing::{get, post},
+    extract::{DefaultBodyLimit, State},
+    http::{header, Method},
+    Json, Router,
 };
-use axum::http::{header, Method};
-use axum::extract::{ DefaultBodyLimit, State };
+
+use passcore::{grade_password, review_password, score};
+
 use serde::{Deserialize, Serialize};
-use passcore::{score, review_password, grade_password};
-use tower_http::{
-    cors::{CorsLayer},
-    services::ServeDir,
-};
+
 use sqlx::SqlitePool;
+
+use tower_http::{
+    cors::CorsLayer,
+    services::ServeDir,
+    trace::{DefaultMakeSpan, DefaultOnResponse, TraceLayer},
+};
+
+use tracing::{error, info, Level};
+
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 
 #[derive(Serialize, Deserialize)]
@@ -47,7 +54,7 @@ async fn score_password(State(state): State<AppState>, Json(input): Json<Input>)
         grade,
     };
 
-    sqlx::query(
+    if let Err(err) = sqlx::query(
         r#"
         UPDATE metrics
         SET total_scored = total_scored + 1,
@@ -58,7 +65,11 @@ async fn score_password(State(state): State<AppState>, Json(input): Json<Input>)
         .bind(psw_score as i64)
         .execute(&state.db)
         .await
-        .expect("Failed to update metrics");
+    {
+        error!(error = %err, "Failed to update metrics");
+    } else {
+        info!(score = psw_score, grade = %output.grade, "Password scored successfully");
+    }
 
     Json(output)
 }
@@ -98,6 +109,14 @@ async fn get_stats(State(state): State<AppState>) -> Json<StatsOutput> {
 
 #[tokio::main]
 async fn main() {
+    // Initialize logging
+    tracing_subscriber::registry()
+        .with(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| "passcore_web=info,tower_http=info".into()),
+        )
+        .with(tracing_subscriber::fmt::layer())
+        .init();
 
     let db_path = std::env::var("DATABASE_PATH").unwrap_or("db.sqlite".to_string());
 
@@ -111,7 +130,7 @@ async fn main() {
         std::fs::File::create(&db_path).expect("Failed to create db file");
     }
 
-    println!("Using DB path: {}", db_path);
+    info!(db_path = %db_path, "Using database path");
 
     let db_url = format!("sqlite://{}", db_path);
     let db = SqlitePool::connect(&db_url)
@@ -158,8 +177,8 @@ async fn main() {
     };
 
     let governor_conf = GovernorConfigBuilder::default()
-        .per_second(2)
-        .burst_size(20)
+        .per_second(5)
+        .burst_size(50)
         .key_extractor(GlobalKeyExtractor)
         .finish()
         .unwrap();
@@ -174,6 +193,19 @@ async fn main() {
         .route("/stats", get(get_stats))
         .merge(score_routes)
         .fallback_service(ServeDir::new("static"))
+        .layer(
+            TraceLayer::new_for_http()
+                .make_span_with(
+                    DefaultMakeSpan::new()
+                        .level(Level::INFO)
+                        .include_headers(false),
+                )
+                .on_response(
+                    DefaultOnResponse::new()
+                        .level(Level::INFO)
+                        .latency_unit(tower_http::LatencyUnit::Millis),
+                )
+        )
         .layer(cors)
         .with_state(state);
 

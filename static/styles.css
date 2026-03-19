@@ -16,9 +16,9 @@ html {
     --input-border-focus: #999999;
     --card-border: rgba(0, 0, 0, 0.08);
     --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-    --focus-ring: 0 0 0 3px rgba(99, 102, 241, 0.18);
-    --primary: #6366f1;
-    --primary-hover: #4f46e5;
+    --focus-ring: 0 0 0 3px rgba(31, 122, 110, 0.18);
+    --primary: #1F7A6E;
+    --primary-hover: #16655B;
     --button-text: #ffffff;
     --footer-text: #8c8c8c;
     --strength-weak: #ef4444;
@@ -36,6 +36,22 @@ html {
     --grade-a-minus: #1fd662;
     --grade-a: #22c55e;
     --grade-a-plus: #26b55a;
+
+    /* Brand highlights — Security theme */
+    --pc-primary:       #1F7A6E;  /* deep teal */
+    --pc-primary-dim:   #16655B;
+
+    --pc-accent:        #C0843D;  /* warm gold */
+    --pc-accent-soft:   #E5C07B;
+
+    --pc-neutral-dark:  #1E1E1E;
+    --pc-neutral:       #6B7280;
+
+    --pc-grad:          linear-gradient(135deg, #1F7A6E 0%, #C0843D 100%);
+    --pc-grad-title:    linear-gradient(120deg, #1F7A6E 0%, #C0843D 100%);
+
+    --pc-glow:          0 0 0 3px rgba(31, 122, 110, 0.25);
+    --pc-glow-dark:     0 0 0 3px rgba(31, 122, 110, 0.4);
 }
 
 .dark {
@@ -48,9 +64,9 @@ html {
     --input-border-focus: #5f6b7c;
     --card-border: rgba(255, 255, 255, 0.08);
     --card-shadow: 0 18px 40px rgba(0, 0, 0, 0.38);
-    --focus-ring: 0 0 0 3px rgba(129, 140, 248, 0.28);
-    --primary: #818cf8;
-    --primary-hover: #6366f1;
+    --focus-ring: 0 0 0 3px rgba(31, 122, 110, 0.3);
+    --primary: #1F7A6E;
+    --primary-hover: #16655B;
     --button-text: #ffffff;
     --footer-text: #7f8a99;
     --strength-weak: #f87171;
@@ -108,12 +124,17 @@ main {
 #header p {
     margin: 0;
     font-size: 0.85rem;
-    color: var(--subtitle);
+    color: var(--pc-accent); /* Looks great on dark mode not on light mode though */
+    opacity: 0.9;
 }
 
 #header h1 {
-    margin-bottom: 0.5rem;
+    color: var(--pc-primary);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 0.5rem;
 }
+
 
 .card {
     /* layout */
@@ -164,23 +185,6 @@ input {
     color: var(--text);
 }
 
-input:focus {
-    border-color: var(--primary);
-}
-
-input[type=submit] {
-    background: var(--primary);
-    color: var(--button-text);
-    border: none;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    padding: 1rem 2rem;
-}
-
-input[type=submit]:hover {
-    background: var(--primary-hover);
-}
-
 .input-wrapper {
     position: relative;
     width: 100%;
@@ -210,7 +214,8 @@ input[type=submit]:hover {
 }
 
 .input-wrapper:focus-within {
-    border-color: var(--primary);
+    border-color: var(--pc-primary);
+    box-shadow: 0 0 0 3px rgba(31, 122, 110, 0.14);
 }
 
 #strength-bar {
@@ -236,6 +241,11 @@ footer {
 
 footer p {
     margin: 0;
+}
+
+footer strong {
+    color: var(--pc-primary);
+    font-weight: 700;
 }
 
 footer #stats-text {
@@ -271,6 +281,7 @@ footer #stats-text {
 
 #theme-toggle:hover {
     transform: scale(1.05);
+    border-color: var(--pc-primary);
 }
 
 #theme-toggle svg {
@@ -322,6 +333,11 @@ body.dark .moon-icon {
     border: none;
     outline: none;
     color: var(--placeholder);
+    transition: color 0.2s ease;
+}
+
+#visibility-toggle:hover {
+    color: var(--pc-accent);
 }
 
 #visibility-toggle svg {
