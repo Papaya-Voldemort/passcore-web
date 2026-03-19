@@ -4,10 +4,12 @@ use axum::{
     Router,
     Json,
 };
+use axum::http::{header, Method};
+use axum::extract::DefaultBodyLimit;
 use serde::{Deserialize, Serialize};
 use passcore::{score, review_password, grade_password};
 use tower_http::{
-    cors::{Any, CorsLayer},
+    cors::{CorsLayer},
     services::ServeDir,
 };
 
@@ -45,13 +47,34 @@ async fn score_password(Json(input): Json<Input>) -> Json<Output> {
 #[tokio::main]
 async fn main() {
     let cors = CorsLayer::new()
-        .allow_origin(Any)
-        .allow_methods(Any)
-        .allow_headers(Any);
+        .allow_origin([
+            "https://passcore-web-production.up.railway.app".parse().unwrap(),
+            "http://localhost:3000".parse().unwrap(),
+        ])
+        .allow_methods([Method::POST, Method::GET])
+        .allow_headers([header::CONTENT_TYPE]);
+
+    use tower_governor::{
+        governor::GovernorConfigBuilder,
+        key_extractor::GlobalKeyExtractor,
+        GovernorLayer,
+    };
+
+    let governor_conf = GovernorConfigBuilder::default()
+        .per_second(2)
+        .burst_size(20)
+        .key_extractor(GlobalKeyExtractor)
+        .finish()
+        .unwrap();
+
+    let score_routes = Router::new()
+        .route("/score", post(score_password))
+        .layer(GovernorLayer::new(governor_conf))
+        .layer(DefaultBodyLimit::max(1024));
 
     let app = Router::new()
         .route("/health", get(health))
-        .route("/score", post(score_password))
+        .merge(score_routes)
         .fallback_service(ServeDir::new("static"))
         .layer(cors);
 
