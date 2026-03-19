@@ -238,6 +238,10 @@ footer p {
     margin: 0;
 }
 
+footer #stats-text {
+    font-size: 0.8rem;
+}
+
 #theme-toggle {
     position: fixed;
     top: 1rem;

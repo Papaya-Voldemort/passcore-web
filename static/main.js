@@ -1,3 +1,24 @@
+async function loadStats() {
+    const statsText = document.querySelector("#passwords-scored");
+
+    try {
+        const res = await fetch(`/stats`);
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        statsText.textContent = data.total_scored;
+    } catch (err) {
+        console.error(err);
+        statsText.textContent = "Error loading stats";
+    }
+}
+
+loadStats();
+
 const form = document.querySelector("#password-form");
 const bar = document.querySelector("#strength-bar");
 
@@ -53,6 +74,8 @@ form.addEventListener("submit", async (e) => {
     } else {
         document.querySelector("#results").textContent = "Please enter your password.";
     }
+
+    loadStats();
 });
 
 const toggleButton = document.querySelector("#theme-toggle");
