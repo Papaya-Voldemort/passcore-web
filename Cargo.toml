@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 axum = "0.8.8"
-tokio = { version = "1.50.0", features = ["full"] }
+tokio = { version = "1.50.0", features = ["rt-multi-thread", "macros", "sync", "time"] }
 serde = { version = "1.0.228", features = ["derive"] }
 passcore = "0.2.2"
 tower-http = { version = "0.6", features = ["cors", "fs", "trace"] }
@@ -13,3 +13,7 @@ tower_governor = { version = "0.8", features = ["axum"] }
 sqlx = { version = "0.7", features = ["sqlite", "runtime-tokio-native-tls"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
+
+[profile.release]
+lto = false
+codegen-units = 256
