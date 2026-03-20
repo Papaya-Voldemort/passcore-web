@@ -21,6 +21,7 @@ use tracing::{error, info, Level};
 
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
+use std::net::SocketAddr;
 
 #[derive(Serialize, Deserialize)]
 struct Input {
@@ -172,14 +173,32 @@ async fn main() {
 
     use tower_governor::{
         governor::GovernorConfigBuilder,
-        key_extractor::GlobalKeyExtractor,
         GovernorLayer,
     };
 
+    // For local dev
+    #[cfg(debug_assertions)]
+    use tower_governor::key_extractor::PeerIpKeyExtractor;
+
+    #[cfg(not(debug_assertions))]
+    use tower_governor::key_extractor::SmartIpKeyExtractor;
+
+    // for local dev
+    #[cfg(debug_assertions)]
     let governor_conf = GovernorConfigBuilder::default()
-        .per_second(5)
-        .burst_size(50)
-        .key_extractor(GlobalKeyExtractor)
+        .per_second(3)
+        .burst_size(15)
+        .key_extractor(PeerIpKeyExtractor)
+        .use_headers()
+        .finish()
+        .unwrap();
+
+    #[cfg(not(debug_assertions))]
+    let governor_conf = GovernorConfigBuilder::default()
+        .per_second(4)
+        .burst_size(25)
+        .key_extractor(SmartIpKeyExtractor)
+        .use_headers()
         .finish()
         .unwrap();
 
@@ -213,5 +232,10 @@ async fn main() {
     let port = std::env::var("PORT").unwrap_or("3000".to_string());
     let addr = format!("0.0.0.0:{}", port);
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    axum::serve(
+        listener,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+        .await
+        .unwrap();
 }

@@ -95,7 +95,7 @@ form.addEventListener("input", async (e) => {
                 results.textContent = "Error calling API";
             }
         }
-    }, 250);
+    }, 300);
 
 });
 
