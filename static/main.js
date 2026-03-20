@@ -53,7 +53,7 @@ let debounceTimer;
 let controller;
 
 // Main scoring logic on input
-form.addEventListener("input", async (e) => { // TODO: Prevent enter from reloading the app
+form.addEventListener("input", async (e) => {
     const password = passwordInput.value.trim();
     clearTimeout(debounceTimer);
 
