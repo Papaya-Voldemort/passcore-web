@@ -15,5 +15,7 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
 
 [profile.release]
-lto = false
-codegen-units = 256
+lto = "thin"
+codegen-units = 16
+panic = "abort"
+strip = true

@@ -10,6 +10,7 @@ use passcore::{grade_password, review_password, score};
 use serde::{Deserialize, Serialize};
 
 use sqlx::SqlitePool;
+use sqlx::sqlite::SqlitePoolOptions;
 
 use tower_http::{
     cors::CorsLayer,
@@ -22,6 +23,7 @@ use tracing::{error, info, Level};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use std::net::SocketAddr;
+use std::time::Duration;
 
 #[derive(Serialize, Deserialize)]
 struct Input {
@@ -83,7 +85,7 @@ struct StatsOutput {
 }
 
 async fn get_stats(State(state): State<AppState>) -> Json<StatsOutput> {
-    let row = sqlx::query_as::<_, (i64, i64)>(
+    match sqlx::query_as::<_, (i64, i64)>(
         r#"
         SELECT total_scored, total_score_sum
         FROM metrics
@@ -92,20 +94,27 @@ async fn get_stats(State(state): State<AppState>) -> Json<StatsOutput> {
     )
         .fetch_one(&state.db)
         .await
-        .expect("Failed to fetch stats");
+    {
+        Ok((total_scored, total_score_sum)) => {
+            let average_score = if total_scored > 0 {
+                total_score_sum as f64 / total_scored as f64
+            } else {
+                0.0
+            };
 
-    let (total_scored, total_score_sum) = row;
-
-    let average_score = if total_scored > 0 {
-        total_score_sum as f64 / total_scored as f64
-    } else {
-        0.0
-    };
-
-    Json(StatsOutput {
-        total_scored,
-        average_score,
-    })
+            Json(StatsOutput {
+                total_scored,
+                average_score,
+            })
+        }
+        Err(err) => {
+            error!(error = %err, "Failed to fetch stats");
+            Json(StatsOutput {
+                total_scored: 0,
+                average_score: 0.0,
+            })
+        }
+    }
 }
 
 #[tokio::main]
@@ -133,10 +142,29 @@ async fn main() {
 
     info!(db_path = %db_path, "Using database path");
 
+
     let db_url = format!("sqlite://{}", db_path);
-    let db = SqlitePool::connect(&db_url)
+    let db = SqlitePoolOptions::new()
+        .max_connections(5)
+        .acquire_timeout(Duration::from_secs(5))
+        .connect(&db_url)
         .await
         .expect("Failed to connect to SQLite");
+
+    sqlx::query("PRAGMA journal_mode = WAL;")
+        .execute(&db)
+        .await
+        .expect("Failed to enable WAL mode");
+
+    sqlx::query("PRAGMA synchronous = NORMAL;")
+        .execute(&db)
+        .await
+        .expect("Failed to set synchronous mode");
+
+    sqlx::query("PRAGMA optimize;")
+        .execute(&db)
+        .await
+        .expect("Failed to optimize SQLite");
 
     sqlx::query(
         r#"
@@ -149,7 +177,7 @@ async fn main() {
     )
         .execute(&db)
         .await
-        .expect("Failed to create metrics table);");
+        .expect("Failed to create metrics table)");
 
     sqlx::query(
         r#"
@@ -230,6 +258,7 @@ async fn main() {
 
     // run our app with hyper, listening globally on port 3000
     let port = std::env::var("PORT").unwrap_or("3000".to_string());
+    info!(port = %port, "Starting server");
     let addr = format!("0.0.0.0:{}", port);
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
     axum::serve(
