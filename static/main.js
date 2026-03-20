@@ -1,3 +1,4 @@
+// LoadStats is a function that calls the /stats portion of the API to find the current amount of passwords the API has scored
 async function loadStats() {
     const statsText = document.querySelector("#passwords-scored");
 
@@ -17,6 +18,7 @@ async function loadStats() {
     }
 }
 
+// Initial load of stats on page start
 loadStats();
 
 const form = document.querySelector("#password-form");
@@ -50,7 +52,8 @@ const results = document.querySelector("#results");
 let debounceTimer;
 let controller;
 
-form.addEventListener("input", async (e) => {
+// Main scoring logic on input
+form.addEventListener("input", async (e) => { // TODO: Prevent enter from reloading the app
     const password = passwordInput.value.trim();
     clearTimeout(debounceTimer);
 
@@ -119,6 +122,8 @@ const icon = document.querySelector("#visibility-toggle svg");
 
 const show = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><circle cx="128" cy="128" r="40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`
 const hide = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><line x1="48" y1="40" x2="208" y2="216" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M154.91,157.6a40,40,0,0,1-53.82-59.2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M135.53,88.71a40,40,0,0,1,32.3,35.53" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M208.61,169.1C230.41,149.58,240,128,240,128S208,56,128,56a126,126,0,0,0-20.68,1.68" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M74,68.6C33.23,89.24,16,128,16,128s32,72,112,72a118.05,118.05,0,0,0,54-12.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`
+
+// Show and hide password button
 VisibilityToggle.addEventListener("click", () => {
     if (PasswordInput.type === "password") {
         PasswordInput.type = "text";
@@ -128,3 +133,6 @@ VisibilityToggle.addEventListener("click", () => {
         icon.innerHTML = show;
     }
 });
+
+// Prevent form from reloading on "enter"
+form.addEventListener("submit", function(e) { e.preventDefault(); });
