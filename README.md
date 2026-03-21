@@ -129,9 +129,9 @@ That’s it.
 
 ### Currently in Progress:
 
-- Move from global rate limiting to IP-based rate limiting
+- Adding more metrics and stats (I love data)
 
-Progress: Basically done I think
+Progress: Next ship/round of features currently focused on polish
 
 ---
 

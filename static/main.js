@@ -81,7 +81,17 @@ form.addEventListener("input", async (e) => {
             });
 
             if (!res.ok) {
-                throw new Error(`HTTP ${res.status}`);
+                if (res.status === 413) {
+                    results.textContent = "Password too long (Max 128 chars)";
+                } else if (res.status === 400) {
+                    results.textContent = "Invalid password";
+                } else if (res.status === 429) {
+                    results.textContent = "Slow down a bit";
+                } else {
+                    results.textContent = "Something went wrong";
+                }
+
+                return; // IMPORTANT: stop execution
             }
 
             const data = await res.json();

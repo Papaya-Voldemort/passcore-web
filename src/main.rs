@@ -1,7 +1,7 @@
 use axum::{
     routing::{get, post},
     extract::{DefaultBodyLimit, State},
-    http::{header, Method},
+    http::{header, Method, StatusCode},
     Json, Router,
 };
 
@@ -46,8 +46,12 @@ async fn health() -> &'static str {
     "I am healthy!"
 }
 
-async fn score_password(State(state): State<AppState>, Json(input): Json<Input>) -> Json<Output> {
+async fn score_password(State(state): State<AppState>, Json(input): Json<Input>) -> Result<Json<Output>, StatusCode> {
     let password = input.password;
+
+    if password.len() > 128 {
+        return Err(StatusCode::PAYLOAD_TOO_LARGE);
+    }
     let psw_score = score(&password);
     let review = review_password(&password).to_string();
     let grade = grade_password(&password).to_string();
@@ -74,7 +78,7 @@ async fn score_password(State(state): State<AppState>, Json(input): Json<Input>)
         info!(score = psw_score, grade = %output.grade, "Password scored successfully");
     }
 
-    Json(output)
+    Ok(Json(output))
 }
 
 
