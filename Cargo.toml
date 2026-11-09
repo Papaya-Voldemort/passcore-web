@@ -1,3 +1,6 @@
+[workspace]
+members = ["wasm"]
+
 [package]
 name = "passcore-web"
 version = "0.1.0"
@@ -19,3 +22,7 @@ lto = "thin"
 codegen-units = 16
 panic = "abort"
 strip = true
+
+[profile.release.package.passcore-wasm]
+opt-level = "z"
+codegen-units = 1

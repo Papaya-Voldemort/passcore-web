@@ -1,3 +1,8 @@
+import init, { score_password } from "./pkg/passcore_wasm.js";
+
+// Load the WebAssembly module so scoring happens locally in the browser
+await init();
+
 // LoadStats is a function that calls the /stats portion of the API to find the current amount of passwords the API has scored
 async function loadStats() {
     const statsText = document.querySelector("#passwords-scored");
@@ -50,16 +55,22 @@ const passwordInput = document.querySelector("#password");
 const results = document.querySelector("#results");
 
 let debounceTimer;
-let controller;
 
-// Main scoring logic on input
-form.addEventListener("input", async (e) => {
+// Main scoring logic on input: scored locally via WebAssembly, then a
+// lightweight ping (score only) is sent so the server can keep count
+function pingScored(score) {
+    fetch("/ping", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ score })
+    }).catch(() => {});
+}
+
+form.addEventListener("input", (e) => {
     const password = passwordInput.value.trim();
     clearTimeout(debounceTimer);
-
-    if (controller) {
-        controller.abort();
-    }
 
     if (password === "") {
         results.textContent = "Please enter your password.";
@@ -67,44 +78,20 @@ form.addEventListener("input", async (e) => {
         return;
     }
 
-    debounceTimer = setTimeout(async () => {
-        controller = new AbortController();
+    if (password.length > 128) {
+        results.textContent = "Password too long (Max 128 chars)";
+        bar.style.width = "0%";
+        return;
+    }
 
-        try {
-            const res = await fetch("/score", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ password }),
-                signal: controller.signal
-            });
+    debounceTimer = setTimeout(() => {
+        const result = score_password(password);
 
-            if (!res.ok) {
-                if (res.status === 413) {
-                    results.textContent = "Password too long (Max 128 chars)";
-                } else if (res.status === 400) {
-                    results.textContent = "Invalid password";
-                } else if (res.status === 429) {
-                    results.textContent = "Slow down a bit";
-                } else {
-                    results.textContent = "Something went wrong";
-                }
+        results.textContent = `Score: ${result.score} | Grade ${result.grade}`;
+        bar.style.width = `${result.score}%`;
+        bar.style.background = getGradeColor(result.grade) || "gray";
 
-                return; // IMPORTANT: stop execution
-            }
-
-            const data = await res.json();
-
-            results.textContent = `Score: ${data.score} | Grade ${data.grade}`;
-            bar.style.width = `${data.score}%`;
-            bar.style.background = getGradeColor(data.grade) || "gray";
-        } catch (err) {
-            if (err.name !== "AbortError") {
-                console.error(err);
-                results.textContent = "Error calling API";
-            }
-        }
+        pingScored(result.score);
     }, 300);
 
 });

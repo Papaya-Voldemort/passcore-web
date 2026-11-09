@@ -1193,6 +1193,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "passcore-wasm"
+version = "0.1.0"
+dependencies = [
+ "passcore",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "passcore-web"
 version = "0.1.0"
 dependencies = [

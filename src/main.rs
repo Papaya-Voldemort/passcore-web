@@ -82,6 +82,32 @@ async fn score_password(State(state): State<AppState>, Json(input): Json<Input>)
 }
 
 
+#[derive(Deserialize)]
+struct PingInput {
+    score: u16,
+}
+
+async fn ping_scored(State(state): State<AppState>, Json(input): Json<PingInput>) -> StatusCode {
+    if let Err(err) = sqlx::query(
+        r#"
+        UPDATE metrics
+        SET total_scored = total_scored + 1,
+            total_score_sum = total_score_sum + ?
+        WHERE id = 1
+        "#
+    )
+        .bind(input.score as i64)
+        .execute(&state.db)
+        .await
+    {
+        error!(error = %err, "Failed to record scored ping");
+    } else {
+        info!(score = input.score, "Recorded scored ping");
+    }
+
+    StatusCode::NO_CONTENT
+}
+
 #[derive(Serialize)]
 struct StatsOutput {
     total_scored: i64,
@@ -236,6 +262,7 @@ async fn main() {
 
     let score_routes = Router::new()
         .route("/score", post(score_password))
+        .route("/ping", post(ping_scored))
         .layer(GovernorLayer::new(governor_conf))
         .layer(DefaultBodyLimit::max(1024));
 
