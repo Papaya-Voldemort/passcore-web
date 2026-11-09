@@ -42,9 +42,7 @@ It’s not trying to be the best at everything. It’s trying to do one thing re
 
 ## Live Demo
 
-https://passcore-web-production.up.railway.app/
-
-If the API fails it's because too many people are using it at a time (will fix soon!)
+> [passcore.nelx.dev](https://passcore.nelx.dev)
 
 ---
 
