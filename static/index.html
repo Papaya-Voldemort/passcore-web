@@ -37,7 +37,7 @@
         <p>Powered by Passcore</p>
     </div>
     <section class="card">
-        <form action="passcore-web-production.up.railway.app" method="post" id="password-form">
+        <form id="password-form">
             <div class="input-wrapper">
                 <div id="actual-input">
                     <input autocomplete="off" type="password" name="password" id="password" placeholder="Enter your password...">
@@ -51,12 +51,12 @@
 </main>
 <footer>
     <p>
-        Passwords are <strong>NEVER</strong> saved on the server:
+        Scoring happens <strong>locally in your browser</strong> via WebAssembly &mdash; your password never leaves your device:
         <a href="https://github.com/Papaya-Voldemort/passcore-web" target="_blank">See how it works</a>
     </p>
 
     <p id="stats-text"><span id="passwords-scored">0</span> passwords scored</p>
 </footer>
-<script src="main.js"></script>
+<script type="module" src="main.js"></script>
 </body>
 </html>

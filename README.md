@@ -31,8 +31,8 @@ And I am a *little* into optimization so... you know where that went.
 
 ## What Makes It Different
 
-- Uses my own aggressive Rust based scoring engine, not a generic checker
-- Focuses heavily on speed — results come back almost instantly
+- Uses my own aggressive Rust based scoring engine, compiled to WebAssembly and run locally in your browser — not a generic checker
+- Focuses heavily on speed — results are instant because no network round trip is involved
 - Keeps things simple instead of trying to do too much
 - Clean UI that doesn’t get in the way
 
@@ -52,20 +52,19 @@ If the API fails it's because too many people are using it at a time (will fix s
 
 ### Stack
 
-- Backend: Rust + Axum
-- Frontend: HTML / CSS / JavaScript
-- Architecture: Stateless API
+- Scoring engine: Rust (Passcore) compiled to WebAssembly, runs 100% client-side
+- Backend: Rust + Axum (serves the static site + a lightweight stats/ping API)
+- Frontend: HTML / CSS / JavaScript (ES module loading the `.wasm` directly)
 - Protection: Rate limiting + backend safeguards
 
 ---
 
 ### Key Technical Decisions
 
-- Rust was chosen because I wanted maximum performance and to learn a lower-level language
+- Rust was chosen because I wanted maximum performance and to learn a lower-level language — it now compiles to WebAssembly so scoring runs directly in the browser
+- Your password is never sent to the server. The frontend scores it locally and only sends an anonymous ping (the numeric score, never the password) so the public "passwords scored" counter keeps working
 - The API is stateless so nothing sensitive needs to be stored
 - Speed was the main priority from the start
-
-One tradeoff is that using an API can feel less safe to some users, but nothing is stored or logged. Everything is processed and returned immediately.
 
 Because it’s open source, you can verify exactly what’s happening.
 
@@ -73,10 +72,8 @@ Because it’s open source, you can verify exactly what’s happening.
 
 ## Performance
 
-- Median response time: ~4ms
-- p99 response time: ~48ms
-
-In practice, this just feels instant. You type, and the result is basically already there.
+- Scoring runs locally in WebAssembly, so results are effectively instant — you type, and the result is already there
+- The only server call is a tiny anonymous ping after each score (a few bytes), used purely for the public counter
 
 ---
 
@@ -95,22 +92,23 @@ This is probably the most polished UI I’ve ever built, and I wanted it to feel
 
 ## Privacy & Trust
 
-- Passwords are never stored
-- Inputs are only used to generate a score and feedback
-- No tracking or logging of passwords
+- Passwords are never sent to the server — scoring happens locally in your browser via WebAssembly
+- The only thing sent to the server is an anonymous numeric score ping to keep the public counter up to date
+- Passwords are never stored or logged
 - Fully open source
 
-You shouldn’t have to trust a black box with your password.
+You shouldn’t have to trust a black box with your password — now you don’t have to send it anywhere at all.
 
 ---
 
 ## How It Works
 
 1. You enter a password
-2. It gets sent to the API and scored using Passcore
-3. You get a score, grade, and feedback
+2. It is scored **locally in your browser** using Passcore compiled to WebAssembly
+3. You instantly get a score, grade, and feedback
+4. A lightweight anonymous ping (score only) is sent to the server so the public "passwords scored" counter stays up to date
 
-That’s it.
+That’s it. The `/score` API endpoint still exists for programmatic use, but the website itself never sends your password anywhere.
 
 ---
 
